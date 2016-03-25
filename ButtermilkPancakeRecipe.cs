@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace PancakeModel
 {
@@ -30,7 +32,7 @@ namespace PancakeModel
                                                             }; 
 
         private readonly VolumnAmountResult _galsAndCupsResult;
-        private readonly decimal _numPancakes;
+        private decimal _numPancakes;
         private readonly VolumnAmountResult _tspAndTbspResult;
 
         public ButtermilkPancakeRecipe(decimal numPancakes = 0m)
@@ -48,30 +50,66 @@ namespace PancakeModel
         public decimal NumTspBakingSoda { get; private set; }
         public decimal NumTspBakingPowder { get; private set; }
         public decimal NumCupsSugar { get; private set; }
+        public string Recipe { get; private set; }
+
+
+        public decimal NumberPancakes
+        {
+            get
+            {
+                return _numPancakes;
+            }
+            set
+            {
+                _numPancakes = value;
+                CalcRecipe();
+            }
+        }
 
         public string GetEggsAmount()
         {
             return Eggs.GetQuantity((int) NumEggs);
+        }
+        public async Task<string> GetEggsAmountAsync()
+        {
+            return await Task.Run(() => Eggs.GetQuantity((int)NumEggs));
         }
 
         public string GetBakingSodaAmount()
         {
             return GetTspsAmount(NumTspBakingSoda);
         }
+        public async Task<string> GetBakingSodaAmountAsync()
+        {
+            return await Task.Run(() => GetTspsAmount(NumTspBakingSoda));
+        }
 
         public string GetBakingPowderAmount()
         {
             return GetTspsAmount(NumTspBakingPowder);
+        }
+        public async Task<string> GetBakingPowderAmountAsync()
+        {
+            return await Task.Run(() => GetTspsAmount(NumTspBakingPowder));
         }
 
         public string GetButtermilkAmount()
         {
             return GetCupsAmount(NumCupsButtermilk);
         }
+        public async Task<string> GetButtermilkAmountAsync()
+        {
+            return await Task.Run(() => GetCupsAmount(NumCupsButtermilk));
+        }
 
         public string GetSugerAmount()
         {
             return GetCupsAmount(NumCupsSugar) + GetPoundsSugarAmount(NumCupsSugar);
+        }
+
+        public async Task<string> GetSugerAmountAsync()
+        {
+            return await Task.Run(() => GetCupsAmount(NumCupsSugar) + GetPoundsSugarAmount(NumCupsSugar)) ;
         }
 
         public static string GetPoundsSugarAmount(decimal numCupsSugar)
@@ -84,6 +122,10 @@ namespace PancakeModel
             //http://www.traditionaloven.com/conversions_of_measures/flour_volume_weight.html
             return GetCupsAmount(NumCupsFlower) + GetPoundsFlourAmount(NumCupsFlower);
         }
+        public async Task<string> GetFlourAmountAsync()
+        {
+            return await Task.Run(() => GetCupsAmount(NumCupsFlower) + GetPoundsFlourAmount(NumCupsFlower));
+        }
 
         public static string GetPoundsFlourAmount(decimal numCupsFlour)
         {
@@ -93,6 +135,10 @@ namespace PancakeModel
         public string GetOilAmount()
         {
             return GetCupsAmount(NumCupsOil) + GetFlOz(NumCupsOil);
+        }
+        public async Task<string> GetOilAmountAsync()
+        {
+            return await Task.Run(() => GetCupsAmount(NumCupsOil) + GetFlOz(NumCupsOil));
         }
 
         public string GetFlOz(decimal numCups)
@@ -180,13 +226,30 @@ namespace PancakeModel
 
         private void CalcRecipe()
         {
-            NumEggs = EggPerPancake*_numPancakes;
+            NumEggs = Decimal.Truncate(EggPerPancake*_numPancakes);
             NumCupsButtermilk = (_numPancakes*CupsButterMilkPerPancake);
             NumCupsOil = (_numPancakes*CupsOilPerPancake);
             NumTspBakingPowder = (_numPancakes*TspsBakinPowerSodaPercake);
             NumTspBakingSoda = (_numPancakes*TspsBakinPowerSodaPercake);
             NumCupsFlower = (_numPancakes*CupsFlourPerPancake);
             NumCupsSugar = (_numPancakes*CupsSugerPerPancake);
+            Recipe = ToString();
+        }
+
+        public override string ToString()
+        {
+            var buf = new StringBuilder();
+            buf.AppendLine("Number of Pancakes: " + NumberPancakes);
+            buf.AppendLine("");
+            buf.AppendLine("Eggs: " + NumEggs);
+            buf.AppendLine("Buttermilk: " + GetButtermilkAmount());
+            buf.AppendLine("Oil: " + GetOilAmount());
+            buf.AppendLine("Baking Powder: " + GetBakingPowderAmount());
+            buf.AppendLine("Baking Soda: " + GetBakingSodaAmount());
+            buf.AppendLine("Flour: " + GetFlourAmount());
+            buf.AppendLine("Sugar: " + GetBakingPowderAmount());
+
+            return buf.ToString();
         }
 
         private static decimal GetCommonFracMeasure(decimal num)
