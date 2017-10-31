@@ -44,6 +44,12 @@
     <Compile Include="VolumnAmmount.cs" />
     <Compile Include="VolumnAmountResult.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="ButtermilkPancakeRecipe.ts" />
+    <TypeScriptCompile Include="Cardinality.ts" />
+    <TypeScriptCompile Include="CupsAndGallons.ts" />
+    <TypeScriptCompile Include="Eggs.ts" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
